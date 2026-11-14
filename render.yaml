@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: colour-clash-run-multiplayer
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_ORIGINS
+        value: https://colour-clash-roun-test.netlify.app,https://develop4534-pixel.github.io

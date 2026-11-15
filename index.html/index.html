@@ -669,6 +669,14 @@
         gap: clamp(0.35em, 0.8cqw, 0.65em) clamp(0.55em, 1.2cqw, 1em);
         align-items: start;
       }
+      .menu-stepper,
+      .menu-setup-step {
+        display: contents;
+      }
+      .setup-heading,
+      .setup-nav {
+        display: none;
+      }
       .menu-intro,
       .menu-arena,
       .menu-hero,
@@ -1340,11 +1348,6 @@
         -webkit-tap-highlight-color: transparent;
       }
       @media (pointer: coarse), (max-width: 700px) {
-        :root {
-          --mobile-control-height: calc(
-            clamp(148px, 20dvh, 184px) + env(safe-area-inset-bottom, 0px)
-          );
-        }
         body {
           height: 100vh;
           height: 100dvh;
@@ -1363,7 +1366,7 @@
         }
         body[data-screen="play"] #stage {
           width: 100vw;
-          height: calc(100dvh - var(--mobile-control-height));
+          height: 100dvh;
           margin: 0;
           border-radius: 0;
         }
@@ -1392,12 +1395,20 @@
         }
         .menu-panel {
           width: 100%;
-          max-height: none;
-          overflow: visible;
+          height: 100%;
+          max-height: 100%;
+          min-height: 0;
+          overflow-x: hidden;
+          overflow-y: auto;
           margin: 0 auto;
           padding: 0.7em 0.65em;
           border-radius: 0.8em;
           font-size: 1em;
+          display: flex;
+          flex-direction: column;
+        }
+        body[data-screen="menu"] #ui {
+          overflow: hidden;
         }
         .menu-layout {
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1482,11 +1493,12 @@
           right: 0;
           bottom: 0;
           left: 0;
-          height: var(--mobile-control-height);
-          border-top: 1px solid rgba(156, 215, 255, 0.5);
-          background:
-            linear-gradient(180deg, rgba(26, 31, 73, 0.38), rgba(11, 15, 39, 0.52));
-          box-shadow: 0 -8px 24px rgba(6, 8, 28, 0.18);
+          height: 38dvh;
+          background: linear-gradient(
+            0deg,
+            rgba(11, 15, 39, 0.26),
+            rgba(11, 15, 39, 0)
+          );
           content: "";
           pointer-events: none;
         }
@@ -1494,7 +1506,7 @@
           position: absolute;
           z-index: 1;
           left: clamp(2px, 1vw, 8px);
-          bottom: calc(max(6px, env(safe-area-inset-bottom, 0px)) + 0.75vh);
+          bottom: calc(max(18px, env(safe-area-inset-bottom, 0px)) + 14dvh);
           width: clamp(96px, min(30vw, 18dvh), 150px);
           height: clamp(96px, min(30vw, 18dvh), 150px);
           aspect-ratio: 1;
@@ -1524,17 +1536,17 @@
         }
         .ctl-emote {
           right: 28%;
-          bottom: calc(max(6px, env(safe-area-inset-bottom, 0px)) + 0.5vh);
+          bottom: calc(max(18px, env(safe-area-inset-bottom, 0px)) + 14dvh);
           margin: 0;
         }
         .ctl-paint {
           right: 8%;
-          bottom: calc(max(6px, env(safe-area-inset-bottom, 0px)) + 0.5vh);
+          bottom: calc(max(18px, env(safe-area-inset-bottom, 0px)) + 14dvh);
         }
         .ctl-actions .ctl-jump {
           display: block;
           right: 18%;
-          bottom: calc(clamp(68px, 9vh, 90px) + env(safe-area-inset-bottom, 0px));
+          bottom: calc(clamp(150px, 23dvh, 200px) + env(safe-area-inset-bottom, 0px));
           width: clamp(68px, 14vw, 84px);
           height: clamp(68px, 14vw, 84px);
           border-color: #fff0a0;
@@ -1566,8 +1578,78 @@
           font-size: clamp(15px, 4vw, 17px);
         }
         #ui .menu-layout {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 0.15em;
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
+          gap: 0.5em;
+          flex: 1 1 auto;
+        }
+        #ui .menu-stepper {
+          display: block;
+          width: 100%;
+          min-width: 0;
+          flex: 1 1 auto;
+        }
+        #ui .menu-setup-step {
+          display: none;
+        }
+        #ui .menu-setup-step.active {
+          display: grid;
+          width: 100%;
+          grid-template-columns: minmax(0, 1fr);
+          min-height: 100%;
+          box-sizing: border-box;
+          align-content: center;
+          gap: 0.65em;
+        }
+        #ui .menu-setup-step > .menu-section {
+          grid-column: 1 / -1;
+        }
+        #ui .setup-heading {
+          display: block;
+          margin: 0.1em 0;
+          color: #ffe281;
+          font-size: 1.3em;
+          text-align: center;
+        }
+        #ui .setup-nav {
+          position: sticky;
+          bottom: 0;
+          z-index: 2;
+          display: grid;
+          grid-template-columns: auto minmax(0, 1fr) auto;
+          align-items: center;
+          gap: 0.5em;
+          margin-top: auto;
+          padding: 0.45em 0.2em max(0.45em, env(safe-area-inset-bottom, 0px));
+          border-top: 1px solid rgba(156, 215, 255, 0.45);
+          background: linear-gradient(180deg, rgba(15, 20, 52, 0.92), var(--pn));
+        }
+        #ui .setup-nav > button {
+          min-height: 48px;
+          margin: 0;
+          padding: 0.3em 0.8em;
+          font-size: 0.9em;
+        }
+        #ui .setup-nav > span {
+          text-align: center;
+          font-size: 0.85em;
+          color: #d7efff;
+        }
+        #ui .menu-intro,
+        #ui .menu-profiles small,
+        #ui .menu-footer {
+          display: none;
+        }
+        #ui .menu-profiles {
+          display: none;
+        }
+        #ui .menu-panel h1 {
+          margin-bottom: 0.1em;
+          font-size: 1.5em;
+        }
+        #ui .xp-wallet {
+          margin: 0.15em auto 0.35em;
         }
         #ui .menu-layout > .menu-room {
           grid-column: 1 / -1;
@@ -1594,16 +1676,30 @@
           font-size: 1.5em;
         }
         #ui .menu-section {
-          padding: 0.12em 0.25em;
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0.35em 0.45em;
         }
         #ui .menu-section .row {
-          gap: 0.15em;
-          margin: 0.05em 0;
+          gap: 0.35em;
+          margin: 0.2em 0;
         }
         #ui .menu-section .row > b {
           flex: 0 0 100%;
           min-width: 0;
-          text-align: left;
+          text-align: center;
+        }
+        #ui .menu-name .row {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          justify-items: center;
+        }
+        #ui .menu-name .row label,
+        #ui .menu-name .row input {
+          min-width: 0;
+          width: 100%;
+          box-sizing: border-box;
+          text-align: center;
         }
         #ui .menu-hero .row,
         #ui .menu-palette .row,
@@ -1618,6 +1714,11 @@
         #ui .menu-hero .row {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+        #ui .menu-hero {
+          max-height: 34dvh;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+        }
         #ui .menu-hero .row > b,
         #ui .menu-palette .row > b,
         #ui .menu-arena .row > b,
@@ -1625,17 +1726,17 @@
           grid-column: 1 / -1;
         }
         #ui .menu-hero canvas {
-          width: 30px;
-          height: 30px;
+          width: 38px;
+          height: 38px;
         }
         #ui .menu-hero .row > button.o {
-          min-height: 44px;
-          padding: 0.1em;
-          font-size: 13px;
+          min-height: 50px;
+          padding: 0.2em;
+          font-size: 14px;
           line-height: 1.05;
         }
         #ui .menu-palette .row {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-columns: repeat(3, minmax(0, 1fr));
         }
         #ui .menu-palette .color-choice {
           justify-content: center;
@@ -1648,9 +1749,9 @@
         }
         #ui .menu-arena .row > button.o {
           min-width: 0;
-          min-height: 44px;
-          padding: 0.1em;
-          font-size: 12px;
+          min-height: 50px;
+          padding: 0.2em;
+          font-size: 13px;
           line-height: 1.05;
         }
         #ui .menu-mode .row > button.o,
@@ -1663,6 +1764,9 @@
         #ui .menu-trail .row {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        #ui .menu-trail .row > b {
+          grid-column: 1 / -1;
         }
         #ui .menu-code .row input,
         #ui .menu-room .row input {
@@ -1711,10 +1815,14 @@
           grid-column: 1 / -1;
         }
         #ui .menu-actions {
-          padding: 0;
+          position: static;
+          padding: 0.2em 0;
         }
         #ui .menu-actions > button {
-          min-height: 44px;
+          min-height: 48px;
+        }
+        #ui .menu-actions > button.go {
+          display: none;
         }
         #ui .menu-actions > button.go {
           min-width: 120px;
@@ -1797,6 +1905,7 @@
         TH = 20,
         ROUND = 90,
         CAMERA_FOCUS_RATIO = 0.72,
+        MOBILE_CAMERA_FOCUS_RATIO = 0.58,
         CORE_CAMERA_FOCUS_RATIO = 0.62,
         LEVEL_ROWS = 15,
         LEVEL_COUNT = 10,
@@ -2237,17 +2346,14 @@
       }
       const savedPlayerState = activeProfile.state;
       function cameraTargetY(player) {
-        const stage = $("#stage").getBoundingClientRect(),
-          dockHeight = isMobileViewport
-            ? Math.min(stage.height, cl(stage.height * 0.16, 84, 150))
-            : 0,
-          dockRatio = stage.height > 0 ? dockHeight / stage.height : 0,
-          safeFocusRatio =
-            1 - dockRatio - (player.h / 2 + 8) / H;
+        const safeFocusRatio = 1 - (player.h / 2 + 8) / H;
         const focusRatio = Math.min(
-          AR[G.ar].core ? CORE_CAMERA_FOCUS_RATIO : CAMERA_FOCUS_RATIO,
+          isMobileViewport
+            ? MOBILE_CAMERA_FOCUS_RATIO
+            : AR[G.ar].core
+              ? CORE_CAMERA_FOCUS_RATIO
+              : CAMERA_FOCUS_RATIO,
           safeFocusRatio,
-          1 - (player.h / 2 + 8) / H,
         );
         return cl(
           player.y + player.h / 2 - H * focusRatio,
@@ -4607,7 +4713,15 @@
           hp: 3,
           steps: 0,
           worldHeight,
-          camY: cl(home.y - H * CAMERA_FOCUS_RATIO, 0, worldHeight - H),
+          camY: cl(
+            home.y -
+              H *
+                (isMobileViewport
+                  ? MOBILE_CAMERA_FOCUS_RATIO
+                  : CAMERA_FOCUS_RATIO),
+            0,
+            worldHeight - H,
+          ),
           key: false,
           falls: 0,
           hits: 0,
@@ -5415,7 +5529,10 @@
           </div>
         </div>`);
       }
-      function menu() {
+      let menuStep = 0;
+      function menu(resetSetup = false) {
+        if (resetSetup) menuStep = 0;
+        menuStep = Math.max(0, Math.min(2, menuStep));
         leaveRoom();
         setScreen("menu");
         syncMusic();
@@ -5432,10 +5549,13 @@
             : "All characters owned";
         show(`<div class="panel menu-panel"><h1>Colour Clash Run</h1><div class="xp-wallet" aria-label="XP balance"><span class="xp-wallet-icon" aria-hidden="true">🪙</span><div class="xp-wallet-copy"><small>XP BALANCE</small><strong>${S.xp.toLocaleString("en-US")} XP</strong><small>${xpProgress}</small></div></div><div class="menu-layout"><div class="menu-intro">Start near the bottom and climb to the large ★ at the top. Grab it, then run back to the portal below before the pursuer catches you. Follow the on-screen arrow: it points to the star first, then to the portal. Collect small gold stars for points. Choose from 10 levels; later levels add more hazards and an earlier colour clash.</div>
 <div class="menu-section menu-profiles"><div class="row"><b>Device account</b><strong>${escapeHtml(activeProfile.name)}</strong></div><small>One local account per device. Progress and choices are saved on this browser.</small></div>
+<div class="menu-stepper">
+<section class="menu-setup-step${menuStep === 0 ? " active" : ""}" data-setup-step="0"><h2 class="setup-heading">Your player</h2>
 <div class="menu-section menu-name"><div class="row"><label for="player-name"><b>Player name</b></label><input id="player-name" maxlength="20" value="${escapeHtml(S.playerName)}" aria-label="Player name" autocomplete="nickname"></div><small>Your friends will see this name in multiplayer rooms.</small></div>
 <div class="menu-section menu-palette"><div class="row"><b>Player color</b>${PLAYER_COLORS.map((color, i) => `<button class="o color-choice${S.color === i ? " on" : ""}" data-k="color" data-v="${i}" aria-label="Choose ${color.n} player color" title="${color.n}"><span class="color-choice-dot" style="--swatch:${color.c}"></span>${color.n}</button>`).join("")}</div></div>
-${S.mode === "team" ? `<div class="menu-section menu-room"><div class="row"><b>Room code or pairing link</b><input id="code" type="text" value="${S.code}" placeholder="Paste a pairing link or enter a code" aria-label="Room code or pairing link" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="o" data-k="create-room">Create room</button><button class="o" data-k="join-room">Join room</button></div><small>Create a room and send its pairing link, or paste a friend's link here. You can also enter a room code. Everyone must choose the same arena and level.</small><small id="room-form-error" role="status" hidden></small></div>` : S.mode === "race" ? `<div class="menu-section menu-code"><div class="row"><b>Race code</b><input id="code" maxlength="8" value="${S.code}" aria-label="Race code"><button class="o" data-k="newcode">New</button></div></div>` : ""}
 <div class="menu-section menu-hero"><div class="row"><b>Hero</b>${AVATAR_MENU_ORDER.map((index) => avatarChoice(AV[index], index)).join("")}</div><div class="row avatar-bottom-row">${AVATAR_BOTTOM_ORDER.map((index) => avatarChoice(AV[index], index)).join("")}</div></div>
+</section>
+<section class="menu-setup-step${menuStep === 1 ? " active" : ""}" data-setup-step="1"><h2 class="setup-heading">Choose your course</h2>
 ${seg(
   "Arena",
   AR.map((a, i) =>
@@ -5445,9 +5565,16 @@ ${seg(
   ),
   S.ar,
   "ar",
-)}${seg("Level", Array.from({ length: LEVEL_COUNT }, (_, i) => `Level ${i + 1}`), S.level - 1, "level")}${seg("Mode", ["Solo ghost run", "Race with bots", "Live team room"], S.mode === "team" ? 2 : S.mode === "race" ? 1 : 0, "mode")}${S.mode === "race" ? seg("Racers", BOTS.map(String), BOTS.indexOf(S.bots), "bots") : ""}${seg("Trail", TR, S.trail, "trail")}
+)}${seg("Level", Array.from({ length: LEVEL_COUNT }, (_, i) => `Level ${i + 1}`), S.level - 1, "level")}
+</section>
+<section class="menu-setup-step${menuStep === 2 ? " active" : ""}" data-setup-step="2"><h2 class="setup-heading">Game options</h2>
+${seg("Mode", ["Solo ghost run", "Race with bots", "Live team room"], S.mode === "team" ? 2 : S.mode === "race" ? 1 : 0, "mode")}${S.mode === "race" ? seg("Racers", BOTS.map(String), BOTS.indexOf(S.bots), "bots") : ""}${seg("Trail", TR, S.trail, "trail")}
+${S.mode === "team" ? `<div class="menu-section menu-room"><div class="row"><b>Room code or pairing link</b><input id="code" type="text" value="${S.code}" placeholder="Paste a pairing link or enter a code" aria-label="Room code or pairing link" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="o" data-k="create-room">Create room</button><button class="o" data-k="join-room">Join room</button></div><small>Create a room and send its pairing link, or paste a friend's link here. You can also enter a room code. Everyone must choose the same arena and level.</small><small id="room-form-error" role="status" hidden></small></div>` : S.mode === "race" ? `<div class="menu-section menu-code"><div class="row"><b>Race code</b><input id="code" maxlength="8" value="${S.code}" aria-label="Race code"><button class="o" data-k="newcode">New</button></div></div>` : ""}
 <div class="menu-section menu-settings"><div class="row"><button class="o${S.snd ? " on" : ""}" data-k="snd">Sound ${S.snd ? "on" : "off"}</button><button class="o${S.music ? " on" : ""}" data-k="music">Music ${S.music ? "on" : "off"}</button><button class="o${S.rm ? " on" : ""}" data-k="rm">Reduce motion ${S.rm ? "on" : "off"}</button></div><div class="row menu-volume"><label for="volume">Volume</label><input id="volume" type="range" min="0" max="100" step="1" value="${S.volume}" aria-label="Master volume" aria-valuetext="${S.volume}%"><output id="volume-value" for="volume">${S.volume}%</output></div></div>
 <div class="menu-actions">${S.mode === "team" ? "" : `<button class="go menu-play-button${S.rm ? " reduced-motion" : ""}" data-k="start">${S.mode === "race" ? "Start race" : "Play"}</button>`}<button class="o" data-k="shop">🛒 Character shop (${avatarCart.size})</button><button class="o" data-k="how">How to play</button></div>
+ </section>
+</div>
+<div class="setup-nav" aria-label="Setup progress"><button class="o" data-k="setup-back"${menuStep === 0 ? " disabled" : ""}>Back</button><span aria-live="polite">Step ${menuStep + 1} of 3</span><button class="go" data-k="${menuStep === 2 ? (S.mode === "team" ? "create-room" : "start") : "setup-next"}">${menuStep === 2 ? (S.mode === "team" ? "Create room" : S.mode === "race" ? "Start race" : "Play") : "Continue"}</button></div>
 <small class="menu-footer">Ages 13+ · No chat, no player contact, no real-money purchases · Share a pairing link with friends to play together</small></div></div>`);
         ui.querySelectorAll("canvas[data-av]").forEach((c) => {
           const x = c.getContext("2d");
@@ -5498,8 +5625,14 @@ ${seg(
         aud();
         const k = b.dataset.k,
           v = +b.dataset.v;
-        if (k === "welcome-start") return roomInvite ? lobby() : menu();
-        else if (k === "copy-invite") {
+        if (k === "welcome-start") return roomInvite ? lobby() : menu(true);
+        else if (k === "setup-back") {
+          menuStep = Math.max(0, menuStep - 1);
+          return menu();
+        } else if (k === "setup-next") {
+          menuStep = Math.min(2, menuStep + 1);
+          return menu();
+        } else if (k === "copy-invite") {
           copyInviteLink();
           return;
         } else if (k === "shop") {
@@ -5614,10 +5747,10 @@ ${seg(
         } else if (k === "how") return how();
         else if (k === "lstart") return lstart();
         else if (k === "lretry") return lobby();
-        else if (k === "lleave") return menu();
+        else if (k === "lleave") return menu(true);
         else if (k === "resume") return resume();
         else if (k === "menu") {
-          return menu();
+          return menu(true);
         } else if (k === "next-level") {
           S.level = +b.dataset.v;
           save();
@@ -6507,7 +6640,7 @@ ${done ? "" : '<button class="go" data-k="again">Play again</button>'}<button cl
         if (document.hidden) pause();
       });
       addEventListener("popstate", () => {
-        if (scr !== "menu") menu();
+        if (scr !== "menu") menu(true);
       });
       addEventListener("blur", pause);
       /* input */
@@ -6516,7 +6649,7 @@ ${done ? "" : '<button class="go" data-k="again">Play again</button>'}<button cl
         const c = e.code;
         if (c === "Escape") {
           if (isMobileViewport && scr !== "menu") {
-            menu();
+            menu(true);
             return;
           }
           if (scr === "play" && !ctlColorPicker.hidden) {
@@ -7983,7 +8116,7 @@ ${done ? "" : '<button class="go" data-k="again">Play again</button>'}<button cl
         ctx.fillStyle = color;
         ctx.fillText(G.key ? "PORTAL" : "STAR", 0, -11);
         ctx.translate(0, 8);
-        ctx.rotate(Math.atan2(uy, ux));
+        ctx.rotate(Math.atan2(arrowY, arrowX));
         ctx.beginPath();
         ctx.moveTo(13, 0);
         ctx.lineTo(-10, -9);

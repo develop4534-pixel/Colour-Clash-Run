@@ -1956,6 +1956,7 @@
         CAMERA_FOCUS_RATIO = 0.72,
         MOBILE_CAMERA_FOCUS_RATIO = 0.38,
         PLAYER_WIDTH_SCALE = 1.5,
+        MOBILE_PLAYER_WIDTH_SCALE = 2.2,
         CORE_CAMERA_FOCUS_RATIO = 0.62,
         LEVEL_ROWS = 15,
         LEVEL_COUNT = 10,
@@ -2395,6 +2396,9 @@
         activeProfileId = activeProfile.id;
       }
       const savedPlayerState = activeProfile.state;
+      function playerWidthScale() {
+        return isMobileViewport ? MOBILE_PLAYER_WIDTH_SCALE : PLAYER_WIDTH_SCALE;
+      }
       function cameraTargetY(player) {
         const safeFocusRatio = 1 - (player.h / 2 + 8) / H;
         const focusRatio = Math.min(
@@ -8394,7 +8398,7 @@ ${done ? "" : '<button class="go" data-k="again">Play again</button>'}<button cl
               q[1] + 30 + (w[1] - q[1]) * f,
               playerAvatar(),
               1,
-              PLAYER_WIDTH_SCALE,
+              playerWidthScale(),
               1,
               0.35,
             );
@@ -8428,7 +8432,7 @@ ${done ? "" : '<button class="go" data-k="again">Play again</button>'}<button cl
             m.y + 30,
             PLAYER_AVATARS[m.color][m.av],
             m.f,
-            PLAYER_WIDTH_SCALE,
+            playerWidthScale(),
             1,
             0.85,
           );
@@ -8469,7 +8473,7 @@ ${done ? "" : '<button class="go" data-k="again">Play again</button>'}<button cl
             p.y + 30,
             playerAvatar(),
             p.face,
-            (1 - stretch + sk) * PLAYER_WIDTH_SCALE,
+            (1 - stretch + sk) * playerWidthScale(),
             1 + stretch - sk,
             p.inv > 0 && S.rm ? 0.5 : 1,
           );

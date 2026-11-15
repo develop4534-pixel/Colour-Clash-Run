@@ -672,10 +672,10 @@
       .menu-intro,
       .menu-arena,
       .menu-hero,
-      .menu-palette,
       .menu-profiles,
       .menu-level,
       .menu-room,
+      .menu-code,
       .menu-actions,
       .menu-footer {
         grid-column: 1 / -1;
@@ -1578,11 +1578,13 @@
         #ui .menu-layout > .menu-level {
           grid-column: 1 / -1;
         }
-        #ui .menu-layout > .menu-hero,
         #ui .menu-layout > .menu-palette,
         #ui .menu-layout > .menu-code,
         #ui .menu-layout > .menu-settings {
           grid-column: span 1;
+        }
+        #ui .menu-layout > .menu-hero {
+          grid-column: 1 / -1;
         }
         #ui .menu-intro {
           font-size: 0.9em;
@@ -5430,9 +5432,10 @@
             : "All characters owned";
         show(`<div class="panel menu-panel"><h1>Colour Clash Run</h1><div class="xp-wallet" aria-label="XP balance"><span class="xp-wallet-icon" aria-hidden="true">🪙</span><div class="xp-wallet-copy"><small>XP BALANCE</small><strong>${S.xp.toLocaleString("en-US")} XP</strong><small>${xpProgress}</small></div></div><div class="menu-layout"><div class="menu-intro">Start near the bottom and climb to the large ★ at the top. Grab it, then run back to the portal below before the pursuer catches you. Follow the on-screen arrow: it points to the star first, then to the portal. Collect small gold stars for points. Choose from 10 levels; later levels add more hazards and an earlier colour clash.</div>
 <div class="menu-section menu-profiles"><div class="row"><b>Device account</b><strong>${escapeHtml(activeProfile.name)}</strong></div><small>One local account per device. Progress and choices are saved on this browser.</small></div>
-<div class="menu-section"><div class="row"><label for="player-name"><b>Player name</b></label><input id="player-name" maxlength="20" value="${escapeHtml(S.playerName)}" aria-label="Player name" autocomplete="nickname"></div><small>Your friends will see this name in multiplayer rooms.</small></div>
-<div class="menu-section menu-hero"><div class="row"><b>Hero</b>${AVATAR_MENU_ORDER.map((index) => avatarChoice(AV[index], index)).join("")}</div><div class="row avatar-bottom-row">${AVATAR_BOTTOM_ORDER.map((index) => avatarChoice(AV[index], index)).join("")}</div></div>
+<div class="menu-section menu-name"><div class="row"><label for="player-name"><b>Player name</b></label><input id="player-name" maxlength="20" value="${escapeHtml(S.playerName)}" aria-label="Player name" autocomplete="nickname"></div><small>Your friends will see this name in multiplayer rooms.</small></div>
 <div class="menu-section menu-palette"><div class="row"><b>Player color</b>${PLAYER_COLORS.map((color, i) => `<button class="o color-choice${S.color === i ? " on" : ""}" data-k="color" data-v="${i}" aria-label="Choose ${color.n} player color" title="${color.n}"><span class="color-choice-dot" style="--swatch:${color.c}"></span>${color.n}</button>`).join("")}</div></div>
+${S.mode === "team" ? `<div class="menu-section menu-room"><div class="row"><b>Room code or pairing link</b><input id="code" type="text" value="${S.code}" placeholder="Paste a pairing link or enter a code" aria-label="Room code or pairing link" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="o" data-k="create-room">Create room</button><button class="o" data-k="join-room">Join room</button></div><small>Create a room and send its pairing link, or paste a friend's link here. You can also enter a room code. Everyone must choose the same arena and level.</small><small id="room-form-error" role="status" hidden></small></div>` : S.mode === "race" ? `<div class="menu-section menu-code"><div class="row"><b>Race code</b><input id="code" maxlength="8" value="${S.code}" aria-label="Race code"><button class="o" data-k="newcode">New</button></div></div>` : ""}
+<div class="menu-section menu-hero"><div class="row"><b>Hero</b>${AVATAR_MENU_ORDER.map((index) => avatarChoice(AV[index], index)).join("")}</div><div class="row avatar-bottom-row">${AVATAR_BOTTOM_ORDER.map((index) => avatarChoice(AV[index], index)).join("")}</div></div>
 ${seg(
   "Arena",
   AR.map((a, i) =>
@@ -5443,7 +5446,6 @@ ${seg(
   S.ar,
   "ar",
 )}${seg("Level", Array.from({ length: LEVEL_COUNT }, (_, i) => `Level ${i + 1}`), S.level - 1, "level")}${seg("Mode", ["Solo ghost run", "Race with bots", "Live team room"], S.mode === "team" ? 2 : S.mode === "race" ? 1 : 0, "mode")}${S.mode === "race" ? seg("Racers", BOTS.map(String), BOTS.indexOf(S.bots), "bots") : ""}${seg("Trail", TR, S.trail, "trail")}
-${S.mode === "team" ? `<div class="menu-section menu-room"><div class="row"><b>Room code or pairing link</b><input id="code" type="text" value="${S.code}" placeholder="Paste a pairing link or enter a code" aria-label="Room code or pairing link" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="o" data-k="create-room">Create room</button><button class="o" data-k="join-room">Join room</button></div><small>Create a room and send its pairing link, or paste a friend's link here. You can also enter a room code. Everyone must choose the same arena and level.</small><small id="room-form-error" role="status" hidden></small></div>` : S.mode === "race" ? `<div class="menu-section menu-code"><div class="row"><b>Race code</b><input id="code" maxlength="8" value="${S.code}" aria-label="Race code"><button class="o" data-k="newcode">New</button></div></div>` : ""}
 <div class="menu-section menu-settings"><div class="row"><button class="o${S.snd ? " on" : ""}" data-k="snd">Sound ${S.snd ? "on" : "off"}</button><button class="o${S.music ? " on" : ""}" data-k="music">Music ${S.music ? "on" : "off"}</button><button class="o${S.rm ? " on" : ""}" data-k="rm">Reduce motion ${S.rm ? "on" : "off"}</button></div><div class="row menu-volume"><label for="volume">Volume</label><input id="volume" type="range" min="0" max="100" step="1" value="${S.volume}" aria-label="Master volume" aria-valuetext="${S.volume}%"><output id="volume-value" for="volume">${S.volume}%</output></div></div>
 <div class="menu-actions">${S.mode === "team" ? "" : `<button class="go menu-play-button${S.rm ? " reduced-motion" : ""}" data-k="start">${S.mode === "race" ? "Start race" : "Play"}</button>`}<button class="o" data-k="shop">🛒 Character shop (${avatarCart.size})</button><button class="o" data-k="how">How to play</button></div>
 <small class="menu-footer">Ages 13+ · No chat, no player contact, no real-money purchases · Share a pairing link with friends to play together</small></div></div>`);
@@ -7897,10 +7899,10 @@ ${done ? "" : '<button class="go" data-k="again">Play again</button>'}<button cl
           clash || G.ph >= G.clashTime - 2.2 ? "#ffb0a0" : "#fff",
           "center",
         );
-        txt("CALL", 600, 119, 15, "#dce5ff", "center");
+        txt("CALL", W / 2, H - 70, 18, "#dce5ff", "center");
         ctx.save();
-        ctx.translate(690, 114);
-        swatch(-34, -12, 68, 24, G.called, 1);
+        ctx.translate(W / 2, H - 38);
+        swatch(-58, -19, 116, 38, G.called, 1);
         ctx.restore();
       }
       function drawObjectiveArrow() {
@@ -8368,10 +8370,11 @@ ${done ? "" : '<button class="go" data-k="again">Play again</button>'}<button cl
           const cl2 = G.ph >= G.clashTime,
             pu = warn && !S.rm ? 1 + 0.08 * Math.sin(G.anim * 14) : 1;
           ctx.save();
-          ctx.translate(W - 62, 22);
+          ctx.translate(W - 64, H - 32);
           ctx.scale(pu, pu);
-          swatch(-44, -14, 88, 28, G.called, 1);
+          swatch(-54, -18, 108, 36, G.called, 1);
           ctx.restore();
+          txt("CALL", W - 64, H - 58, 15, "#dce5ff", "center");
           txt(
             cl2
               ? "CLASH!"

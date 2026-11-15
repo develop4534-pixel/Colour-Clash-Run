@@ -1954,7 +1954,7 @@
         TH = 20,
         ROUND = 90,
         CAMERA_FOCUS_RATIO = 0.72,
-        MOBILE_CAMERA_FOCUS_RATIO = 0.38,
+        MOBILE_CAMERA_FOCUS_RATIO = 0.34,
         PLAYER_WIDTH_SCALE = 1.5,
         MOBILE_PLAYER_WIDTH_SCALE = 2.2,
         CORE_CAMERA_FOCUS_RATIO = 0.62,
@@ -3907,7 +3907,7 @@
         c.save();
         c.globalAlpha = al;
         c.translate(fx, fy);
-        c.scale(face * sx, sy);
+        c.scale((face < 0 ? -1 : 1) * sx, sy);
         if (av.e === "fruitHero") {
           drawLimeHero(c, av.b);
           c.restore();
@@ -5118,7 +5118,7 @@
           boosted = p.speedBoost > 0;
         const tg2 = p.stun > 0 ? 0 : dir * (boosted ? 350 : 270);
         p.vx += (tg2 - p.vx) * Math.min(1, (p.on ? 16 : 9) * dt);
-        if (dir && p.stun <= 0) p.face = dir;
+        if (dir && p.stun <= 0) p.face = dir > 0 ? 1 : -1;
         p.coy -= dt;
         p.jb -= dt;
         if (p.jb > 0 && p.coy > 0 && p.stun <= 0) {
